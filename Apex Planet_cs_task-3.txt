@@ -1,0 +1,161 @@
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import re
+
+class WebSecurityScanner:
+    def __init__(self, url):
+        self.url = url
+
+    def check_security_headers(self):
+        print("\n[+] Checking Security Headers...")
+        try:
+            response = requests.get(self.url, timeout=10)
+
+            headers = [
+                "Content-Security-Policy",
+                "X-Frame-Options",
+                "X-Content-Type-Options",
+                "Strict-Transport-Security",
+                "Referrer-Policy"
+            ]
+
+            for header in headers:
+                if header in response.headers:
+                    print(f"[PASS] {header} Found")
+                else:
+                    print(f"[FAIL] {header} Missing")
+
+        except Exception as e:
+            print("Error:", e)
+
+    def check_forms(self):
+        print("\n[+] Detecting Forms...")
+        try:
+            response = requests.get(self.url, timeout=10)
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            forms = soup.find_all("form")
+
+            print(f"Total Forms Found: {len(forms)}")
+
+            for i, form in enumerate(forms, start=1):
+                print(f"\nForm {i}")
+
+                action = form.get("action")
+                method = form.get("method", "GET")
+
+                print("Action:", action)
+                print("Method:", method)
+
+        except Exception as e:
+            print("Error:", e)
+
+    def check_https(self):
+        print("\n[+] HTTPS Check")
+
+        if self.url.startswith("https://"):
+            print("[PASS] Website uses HTTPS")
+        else:
+            print("[FAIL] Website does not use HTTPS")
+
+    def check_server_info(self):
+        print("\n[+] Server Information")
+
+        try:
+            response = requests.get(self.url, timeout=10)
+
+            server = response.headers.get("Server")
+
+            if server:
+                print("Server:", server)
+            else:
+                print("Server header hidden")
+
+        except Exception as e:
+            print("Error:", e)
+
+    def check_cookies(self):
+        print("\n[+] Cookie Security")
+
+        try:
+            response = requests.get(self.url, timeout=10)
+
+            cookies = response.cookies
+
+            if cookies:
+                print("Cookies Found")
+
+                for cookie in cookies:
+                    print("Cookie:", cookie.name)
+            else:
+                print("No Cookies Found")
+
+        except Exception as e:
+            print("Error:", e)
+
+    def basic_information(self):
+        print("\n[+] Website Information")
+
+        try:
+            response = requests.get(self.url, timeout=10)
+
+            print("Status Code:", response.status_code)
+            print("Content Type:",
+                  response.headers.get("Content-Type", "Unknown"))
+
+            print("Content Length:",
+                  response.headers.get("Content-Length", "Unknown"))
+
+        except Exception as e:
+            print("Error:", e)
+
+    def find_emails(self):
+        print("\n[+] Searching for Emails")
+
+        try:
+            response = requests.get(self.url, timeout=10)
+
+            emails = re.findall(
+                r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
+                response.text
+            )
+
+            unique_emails = set(emails)
+
+            if unique_emails:
+                for email in unique_emails:
+                    print(email)
+            else:
+                print("No Emails Found")
+
+        except Exception as e:
+            print("Error:", e)
+
+    def run_scan(self):
+        print("=" * 50)
+        print("WEB APPLICATION SECURITY SCANNER")
+        print("=" * 50)
+
+        self.basic_information()
+        self.check_https()
+        self.check_security_headers()
+        self.check_server_info()
+        self.check_cookies()
+        self.check_forms()
+        self.find_emails()
+
+        print("\nScan Completed Successfully")
+
+
+def main():
+    print("Task 3 - Web Application Security Scanner")
+
+    target = input("Enter Website URL (Example: https://example.com): ").strip()
+
+    scanner = WebSecurityScanner(target)
+    scanner.run_scan()
+
+
+if __name__ == "__main__":
+    main()
