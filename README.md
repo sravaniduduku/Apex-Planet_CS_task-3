@@ -1,8 +1,8 @@
-# Task 3 – Web Application Security Scanner
+ Web Application Security Scanner
 
 ## Overview:
 
-This project is a **Web Application Security Scanner** developed in Python as part of **Task 3: Web Application Security**. The tool helps analyze a website's basic security posture by checking security headers, HTTPS implementation, server information, cookies, forms, and publicly exposed email addresses.
+This project is a **Web Application Security Scanner** developed in Python as part of  the tool helps analyze a website's basic security posture by checking security headers, HTTPS implementation, server information, cookies, forms, and publicly exposed email addresses.
 
 The project demonstrates fundamental web security assessment techniques and provides insights into common security configurations used in modern web applications.
 
